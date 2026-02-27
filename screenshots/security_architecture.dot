@@ -1,0 +1,29 @@
+digraph G {
+  rankdir = "LR";
+  node [shape = rect, fontname = "sans-serif", style=filled, fillcolor=white];
+
+  subgraph cluster_aws_account {
+    label = "AWS Security Governance Fabric";
+    style = dashed;
+    color = blue;
+
+    CloudTrail [label="CloudTrail\n(API Audit)", fillcolor="#FF9900", fontcolor=white];
+    GuardDuty [label="GuardDuty\n(AI Threat Intel)", fillcolor="#FF4F8B", fontcolor=white];
+    AWSConfig [label="AWS Config\n(Compliance)", fillcolor="#2E73B8", fontcolor=white];
+    CW_Events [label="CloudWatch Events\n(Orchestrator)", fillcolor="#7AA116", fontcolor=white];
+
+    subgraph cluster_storage {
+      label = "Immutable Storage";
+      S3 [label="Hardened S3 Bucket\n(Retention & Glacier)", fillcolor="#E05243", fontcolor=white];
+    }
+  }
+
+  SNS [label="Amazon SNS\n(Alert Channel)", fillcolor="#FF4F8B", fontcolor=white];
+  Admin [shape=person, label="Lead Architect\n(Dan Alwende)"];
+
+  CloudTrail -> S3 [label="Audit Logs"];
+  AWSConfig -> S3 [label="Resource State"];
+  GuardDuty -> CW_Events [label="Finding"];
+  CW_Events -> SNS [label="Trigger"];
+  SNS -> Admin [label="Real-time SMS/Email"];
+}
